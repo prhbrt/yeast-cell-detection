@@ -27,7 +27,7 @@ Detecting yeast cells and their budding (multiplication) behavior in brightfield
 
 <table>
   <tr>	
-    <td><img src="images/brightfield-concept.gif"/>
+    <td><img src="images/brightfield-concept.png"/>
   </tr>
   <tr>
     <td>Figure 2. Concept of recording a brightfield image</td>
@@ -45,13 +45,10 @@ Although we had a lot of data, we didn't have many labels. Since the images look
     <td>Figure 3. Examples of synthetic data, the red areas are the labels.</td>
   </tr>
 </table>
-
-
-
  
 **Motivation** Budding behavior is important to understand cell multiplication in various biological research questions. The best tool so far is [yeast spotter](https://academic.oup.com/bioinformatics/article/35/21/4525/5490207), which allows very good detection of cells, but only has heuristics to find the budding moment and nothing to find the mother. Therefore researcher often do many manual annotations, and hence automation would speed up this type of research.
 
-**Cell detection results** Using the synthetic data for training, we can get decent results on detecting cells. We're not interested in finding all cells, however the precision should be high to avoid conclusions based on false positives.
+**Cell detection results** Using the synthetic data for training, we can get decent results on detecting cells. We're not interested in finding all cells, however, the precision should be high to avoid conclusions based on false positives.
 
 <table>
   <tr>	
@@ -62,19 +59,17 @@ Although we had a lot of data, we didn't have many labels. Since the images look
   </tr>
 </table>
 
-**Boundary detection** Based on the cell location, we tracked the boundary via seam carving on a polar-coordinate transform. By transforming the polar coordinates, and finding the path along the angle-axis from 0 to 2 pi with highest or lowest cummulative pixel values, we get an estimate of where the boundary is. Highest will locate the white, and lowest the black boundary. We took the average of both as the boundary location.
+**Boundary detection** Based on the cell location, we tracked the boundary via seam carving on a polar-coordinate transform. By transforming the polar coordinates, and finding the path along the angle-axis from 0 to 2 pi with highest or lowest cummulative pixel values, we get an estimate of where the boundary is. Highest cumulative value will locate the white, and lowest the black boundary. We took the average of both as the estimated boundary location.
+
+ffmpeg -i boundary-example-01.mp4 -r 15 -vf scale=512:-1 -ss 00:00:00 -to 00:00:06 boundary-example-01.fig
 
 <table>
   <tr>	
     <td>
-        <video width="320" height="240" controls>
-          <source src="images/boundary-example-01.mp4" type="video/mp4">
-        </video>
+        <img src="images/boundary-example-01.gif"/>
     </td>
     <td>
-        <video width="320" height="240" controls>
-          <source src="images/boundary-example-02.mp4" type="video/mp4">
-        </video>
+        <img src="images/boundary-example-02.gif"/>
     </td>
   </tr>
   <tr>
@@ -82,15 +77,34 @@ Although we had a lot of data, we didn't have many labels. Since the images look
   </tr>
 </table>
 
+**Same cell detection** Out algorithm detected the cells in each time frame idependently, we used DBSCAN to cluster the detections that belong to the same cell over time, and consider a maximum time-distance of 2 frames.
+
+
+<table>
+  <tr>	
+    <td>
+        <img src="images/plot-in-3d.png"/>
+    </td>
+  </tr>
+  <tr>
+    <td>Figure 6. Example of a 3D point cloud of all detected cels over time.</td>
+  </tr>
+  <tr>
+    <td>
+        <img src="images/time-clustering.png"/>
+    </td>
+  <tr>
+  <tr>
+    <td>Figure 7. Cluster results, each line represents the movement of a cell over time.</td>
+  </tr>
+</table>
+
+**Budding detection**
 
 ## Implementation
 
-We created a notebook that implements the entire pipeline.
+We created a notebook to run all steps.
 
- * [Entire pipeline](notebooks/aaa.ipynb)
+ * [Entire pipeline](notebooks/Example.ipynb)
 
-
-## Usage
-
-We also created a tool to create either jsons or tiffs with the results.
 
